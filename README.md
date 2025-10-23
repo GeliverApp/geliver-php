@@ -14,7 +14,9 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 - Adım Adım
 - Webhooklar
 - Testler
-- Modeller ve Notlar
+- Modeller
+- Enum Kullanımı
+- Notlar ve İpuçları
 
 ---
 
@@ -28,7 +30,7 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 
 1. Geliver Kargo API tokenı alın (https://app.geliver.io/apitokens adresinden)
 2. Gönderici adresi oluşturun (addresses()->createSender)
-3. Gönderiyi alıcıyı ID ile ya da adres nesnesi ile vererek oluşturun (shipments()->create)
+3. Gönderiyi alıcıyı ID'si ile ya da adres nesnesi ile vererek oluşturun (shipments()->create)
 4. Teklifleri bekleyin ve kabul edin (transactions()->acceptOffer)
 5. Barkod, takip numarası, etiket URL’leri Transaction içindeki Shipment’te bulunur
 6. Test gönderilerinde her GET /shipments isteği kargo durumunu bir adım ilerletir; prod'da webhook kurun
@@ -131,7 +133,7 @@ file_put_contents('label.html', $client->shipments()->downloadResponsiveLabel($s
 
 ---
 
-## Alıcıyı ID ile oluşturma (recipientAddressID)
+## Alıcı ID'si ile oluşturma (recipientAddressID)
 
 ```php
 // Önce alıcı adresini kaydedin ve ID alın
@@ -175,12 +177,12 @@ echo 'Status: ' . ($ts['trackingStatusCode'] ?? '') . ' ' . ($ts['trackingSubSta
 
 ---
 
-## Modeller ve Notlar
+## Modeller
 
 - Shipment, Transaction, TrackingStatus, Address, ParcelTemplate, ProviderAccount, Webhook, Offer, PriceQuote ve daha fazlası.
 - Tam liste: `src/Models/Models.php`.
 
-Enum Kullanımı (TR)
+## Enum Kullanımı (TR)
 
 ```php
 use Geliver\Models\ShipmentLabelFileType;
@@ -191,7 +193,9 @@ if (($s['labelFileType'] ?? null) === ShipmentLabelFileType::PDF->value) {
 }
 ```
 
-Notlar ve İpuçları (TR)
+---
+
+## Notlar ve İpuçları (TR)
 
 - Ondalıklı sayılar string olarak gelir; hesaplama için BCMath veya GMP kullanın.
 - Teklif beklerken 1 sn aralıkla tekrar sorgulayın; gereksiz yükten kaçının.
