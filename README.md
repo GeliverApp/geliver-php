@@ -3,8 +3,9 @@
 Geliver PHP SDK — official PHP client for Geliver Kargo Pazaryeri (Shipping Marketplace) API.
 Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu sağlar.
 
-Dokümantasyon (TR): Modeller ve endpoint detayları için https://docs.geliver.com
-Documentation (EN): For detailed models and endpoints, see https://docs.geliver.com
+• Dokümantasyon (TR/EN): https://docs.geliver.io
+
+---
 
 ## İçindekiler
 
@@ -15,22 +16,29 @@ Documentation (EN): For detailed models and endpoints, see https://docs.geliver.
 - Testler
 - Modeller ve Notlar
 
-Türkçe (TR)
-
-- 0. Geliver Kargo API tokenı alın (https://app.geliver.io/apitokens adresinden)
-- 1. Gönderici adresi oluşturun (addresses()->createSender)
-- 2. Gönderiyi alıcıyı ID ile ya da adres nesnesi ile vererek oluşturun (shipments()->create)
-- 3. Teklifleri bekleyin ve kabul edin (transactions()->acceptOffer)
-- 4. Barkod, takip numarası, etiket URL’leri Transaction içindeki Shipment’te bulunur
-- 5. Test gönderilerinde her GET /shipments isteği kargo durumunu bir adım ilerletir; prod'da webhook kurun
-- 6. Etiketleri indirin (downloadLabel, downloadResponsiveLabel)
-- 7. İade gönderisi gerekiyorsa shipments()->createReturn kullanın
+---
 
 ## Kurulum
 
 - `cd sdks/php && composer install`
 
+---
+
+## Akış (TR)
+
+1. Geliver Kargo API tokenı alın (https://app.geliver.io/apitokens adresinden)
+2. Gönderici adresi oluşturun (addresses()->createSender)
+3. Gönderiyi alıcıyı ID ile ya da adres nesnesi ile vererek oluşturun (shipments()->create)
+4. Teklifleri bekleyin ve kabul edin (transactions()->acceptOffer)
+5. Barkod, takip numarası, etiket URL’leri Transaction içindeki Shipment’te bulunur
+6. Test gönderilerinde her GET /shipments isteği kargo durumunu bir adım ilerletir; prod'da webhook kurun
+7. Etiketleri indirin (downloadLabel, downloadResponsiveLabel)
+8. İade gönderisi gerekiyorsa shipments()->createReturn kullanın
+
+---
+
 ## Hızlı Başlangıç
+
 ```php
 use Geliver\Client;
 
@@ -46,6 +54,8 @@ $shipment = $client->shipments()->createTest([
   'length' => 10, 'width' => 10, 'height' => 10, 'distanceUnit' => 'cm', 'weight' => 1, 'massUnit' => 'kg',
 ]);
 ```
+
+---
 
 ## Türkçe Akış (TR)
 
@@ -119,6 +129,8 @@ file_put_contents('label.pdf', $client->shipments()->downloadLabel($shipment['id
 file_put_contents('label.html', $client->shipments()->downloadResponsiveLabel($shipment['id']));
 ```
 
+---
+
 ## Alıcıyı ID ile oluşturma (recipientAddressID)
 
 ```php
@@ -139,10 +151,14 @@ $client->shipments()->create([
 ]);
 ```
 
+---
+
 ## Webhooklar
 
 - `/webhooks/geliver` gibi bir endpoint yayınlayın ve JSON içeriği işleyin. Doğrulama için `Geliver\Webhooks::verify($rawBody, $headers, false)` kullanabilirsiniz (şimdilik devre dışı).
 - Webhook yönetimi: `$client->webhooks()->create('https://yourapp.test/webhooks/geliver');`
+
+---
 
 ## Testler
 
@@ -156,6 +172,8 @@ $s = $client->shipments()->get($shipment['id']);
 $ts = $s['trackingStatus'] ?? null;
 echo 'Status: ' . ($ts['trackingStatusCode'] ?? '') . ' ' . ($ts['trackingSubStatusCode'] ?? '') . PHP_EOL;
 ```
+
+---
 
 ## Modeller ve Notlar
 
