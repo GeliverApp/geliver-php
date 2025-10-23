@@ -66,7 +66,7 @@ use Geliver\Client;
 
 $client = new Client('YOUR_TOKEN');
 
-// 1) Gönderici adresi oluşturma
+// 1) Gönderici adresi oluşturma. Her gönderici adresi için tek seferlik yapılır. Oluşan gönderici adres ID'sini saklayıp tekrar kullanılır.
 $sender = $client->addresses()->createSender([
   'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'phone' => '+905051234567',
   'address1' => 'Street 1', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
