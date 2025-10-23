@@ -1,0 +1,6 @@
+# PHP / Composer
+vendor/
+composer.lock
+.DS_Store
+.env
+
