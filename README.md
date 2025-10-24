@@ -155,6 +155,24 @@ $client->shipments()->create([
 
 ---
 
+---
+
+## İade Gönderisi Oluşturun
+
+```php
+$returned = $client->shipments()->createReturn($shipment['id'], [
+  'willAccept' => true,
+  'providerServiceCode' => 'SURAT_STANDART',
+  'count' => 1,
+]);
+```
+
+Not:
+- `providerServiceCode` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin sağlayıcısı kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
+- `senderAddress` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin alıcı adresi kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
+
+---
+
 ## Webhooklar
 
 - `/webhooks/geliver` gibi bir endpoint yayınlayın ve JSON içeriği işleyin. Doğrulama için `Geliver\Webhooks::verify($rawBody, $headers, false)` kullanabilirsiniz (şimdilik devre dışı).
