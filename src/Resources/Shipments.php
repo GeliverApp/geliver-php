@@ -11,6 +11,11 @@ class Shipments
 
     /** Create shipment; recipient can be provided inline or via recipientAddressID. @return array Shipment */
     public function create(array $body): array {
+        if (isset($body['order']) && is_array($body['order'])) {
+            if (!isset($body['order']['sourceCode']) || !$body['order']['sourceCode']) {
+                $body['order']['sourceCode'] = 'API';
+            }
+        }
         foreach (['length','width','height','weight'] as $k) {
             if (array_key_exists($k, $body) && $body[$k] !== null) {
                 $body[$k] = (string)$body[$k];

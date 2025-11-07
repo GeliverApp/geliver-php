@@ -51,7 +51,7 @@ $sender = $client->addresses()->createSender([
   'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
 ]);
 $shipment = $client->shipments()->createTest([
-  'sourceCode' => 'API', 'senderAddressID' => $sender['id'],
+  'senderAddressID' => $sender['id'],
   'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadikoy', 'districtID' => 100000, 'zip' => '34000'],
   // İstek alanları string olmalıdır
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
@@ -77,8 +77,8 @@ $sender = $client->addresses()->createSender([
 ]);
 
 // 2) Gönderi oluşturma (iki adım) — Seçenek A: alıcıyı inline verin (kayıt oluşturmadan)
-$shipment = $client->shipments()->create([
-  'sourceCode' => 'API',
+// Canlı ortamda createTest yerine create fonksiyonunu kullanın.
+$shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
   'recipientAddress' => [
     'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+905051234568',
@@ -105,7 +105,7 @@ if (!($offers && ((int)($offers['percentageCompleted'] ?? 0) == 100 || isset($of
     $s = $client->shipments()->get($shipment['id']);
     $offers = $s['offers'] ?? null;
     $pc = (int)($offers['percentageCompleted'] ?? 0);
-    if ($pc >= 99 || isset($offers['cheapest'])) break;
+    if ($pc == 100 || isset($offers['cheapest'])) break;
     usleep(1000000);
   } while (true);
 }
@@ -143,7 +143,6 @@ $recipient = $client->addresses()->createRecipient([
 
 // Ardından recipientAddressID ile gönderi oluşturun
 $client->shipments()->create([
-  'sourceCode' => 'API',
   'senderAddressID' => $sender['id'],
   'recipientAddressID' => $recipient['id'],
   'providerServiceCode' => 'MNG_STANDART',

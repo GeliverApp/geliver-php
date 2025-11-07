@@ -26,12 +26,13 @@ $sender = $client->addresses()->createSender([
 ]);
 
 $shipment = $client->shipments()->createTest([
-  'sourceCode' => 'API', 'senderAddressID' => $sender['id'],
+  'senderAddressID' => $sender['id'],
   'recipientAddress' => [
     'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+905051234568',
     'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
     'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
   ],
+  'order' => [ 'orderNumber' => 'ABC12333322', 'sourceIdentifier' => 'https://magazaadresiniz.com', 'totalAmount' => 150, 'totalAmountCurrency' => 'TL' ],
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
 
@@ -63,12 +64,13 @@ if (!empty($tx['shipment']['responsiveLabelURL'])) {
 }
 
 // Test gönderilerinde her GET /shipments isteği kargo durumunu bir adım ilerletir; prod'da webhook önerilir.
-for ($i=0; $i<5; $i++) { sleep(1); $client->shipments()->get($shipment['id']); }
+/*for ($i=0; $i<5; $i++) { sleep(1); $client->shipments()->get($shipment['id']); }
 $tracked = $client->shipments()->get($shipment['id']);
 echo 'Tracking number (refresh): ' . ($tracked['trackingNumber'] ?? '') . PHP_EOL;
 if (!empty($tracked['trackingStatus'])) {
   echo 'Final tracking status: ' . ($tracked['trackingStatus']['trackingStatusCode'] ?? '') . ' ' . ($tracked['trackingStatus']['trackingSubStatusCode'] ?? '') . PHP_EOL;
-}
+}*/
+
 // Manual tracking check
 $latest = $client->shipments()->get($shipment['id']);
 $ts = $latest['trackingStatus'] ?? [];
