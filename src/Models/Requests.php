@@ -26,11 +26,11 @@ class CreateShipmentRequestBase
     public function __construct(
         public string $sourceCode,
         public string $senderAddressID,
-        public ?float $length = null,
-        public ?float $width = null,
-        public ?float $height = null,
+        public ?string $length = null,
+        public ?string $width = null,
+        public ?string $height = null,
         public ?string $distanceUnit = null,
-        public ?float $weight = null,
+        public ?string $weight = null,
         public ?string $massUnit = null,
         public ?string $providerServiceCode = null,
     ) {}
@@ -42,11 +42,11 @@ class CreateShipmentWithRecipientID extends CreateShipmentRequestBase
         string $sourceCode,
         string $senderAddressID,
         public string $recipientAddressID,
-        ?float $length = null,
-        ?float $width = null,
-        ?float $height = null,
+        ?string $length = null,
+        ?string $width = null,
+        ?string $height = null,
         ?string $distanceUnit = null,
-        ?float $weight = null,
+        ?string $weight = null,
         ?string $massUnit = null,
         ?string $providerServiceCode = null,
     ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode); }
@@ -58,11 +58,11 @@ class CreateShipmentWithRecipientAddress extends CreateShipmentRequestBase
         string $sourceCode,
         string $senderAddressID,
         public array $recipientAddress,
-        ?float $length = null,
-        ?float $width = null,
-        ?float $height = null,
+        ?string $length = null,
+        ?string $width = null,
+        ?string $height = null,
         ?string $distanceUnit = null,
-        ?float $weight = null,
+        ?string $weight = null,
         ?string $massUnit = null,
         ?string $providerServiceCode = null,
     ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode); }
@@ -71,12 +71,11 @@ class CreateShipmentWithRecipientAddress extends CreateShipmentRequestBase
 class UpdatePackageRequest
 {
     public function __construct(
-        public ?float $height = null,
-        public ?float $width = null,
-        public ?float $length = null,
+        public ?string $height = null,
+        public ?string $width = null,
+        public ?string $length = null,
         public ?string $distanceUnit = null,
-        public ?float $weight = null,
+        public ?string $weight = null,
         public ?string $massUnit = null,
     ) {}
 }
-

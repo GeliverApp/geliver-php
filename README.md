@@ -53,9 +53,12 @@ $sender = $client->addresses()->createSender([
 $shipment = $client->shipments()->createTest([
   'sourceCode' => 'API', 'senderAddressID' => $sender['id'],
   'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadikoy', 'districtID' => 100000, 'zip' => '34000'],
-  'length' => 10, 'width' => 10, 'height' => 10, 'distanceUnit' => 'cm', 'weight' => 1, 'massUnit' => 'kg',
+  // İstek alanları string olmalıdır
+  'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
 ```
+
+Canlı ortamda `$client->shipments()->createTest(...)` yerine `$client->shipments()->create(...)` çağırın.
 
 ---
 
@@ -82,16 +85,10 @@ $shipment = $client->shipments()->create([
     'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
     'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
   ],
-  'length' => 10, 'width' => 10, 'height' => 10, 'distanceUnit' => 'cm', 'weight' => 1, 'massUnit' => 'kg',
+  'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
 
-// Etiketler bazı akışlarda create sonrasında hazır olabilir; varsa hemen indirin
-if (!empty($shipment['labelURL'])) {
-  file_put_contents('label_pre.pdf', $client->shipments()->downloadLabel($shipment['id']));
-}
-if (!empty($shipment['responsiveLabelURL'])) {
-  file_put_contents('label_pre.html', $client->shipments()->downloadResponsiveLabel($shipment['id']));
-}
+// Etiket indirme: Teklif kabulünden sonra (Transaction) gelen URL'leri kullanabilirsiniz de; URL'lere her shipment nesnesinin içinden ulaşılır.
 
 // 3) Alıcı adresi oluşturma (örnek)
 $recipient = $client->addresses()->createRecipient([
@@ -102,8 +99,8 @@ $recipient = $client->addresses()->createRecipient([
 
 // 4) Teklifleri kontrol et: create yanıtında hazır olabilir
 $offers = $shipment['offers'] ?? null;
-if (!($offers && ((int)($offers['percentageCompleted'] ?? 0) >= 99 || isset($offers['cheapest'])))) {
-  // Hazır değilse, >= %99 olana kadar 1 sn aralıkla sorgulayın (backend 99'da kalabilir)
+if (!($offers && ((int)($offers['percentageCompleted'] ?? 0) == 100 || isset($offers['cheapest'])))) {
+  // Hazır değilse, 100 olana kadar 1 sn aralıkla sorgulayın
   do {
     $s = $client->shipments()->get($shipment['id']);
     $offers = $s['offers'] ?? null;
@@ -127,8 +124,9 @@ $ts = $latest['trackingStatus'] ?? [];
 echo 'Final tracking status: ' . ($ts['trackingStatusCode'] ?? '') . ' ' . ($ts['trackingSubStatusCode'] ?? '') . PHP_EOL;
 
 // Download labels
-file_put_contents('label.pdf', $client->shipments()->downloadLabel($shipment['id']));
-file_put_contents('label.html', $client->shipments()->downloadResponsiveLabel($shipment['id']));
+// Teklif kabulünden sonra Transaction içindeki Shipment alanındaki URL'leri kullanın (ek GET yok)
+file_put_contents('label.pdf', $client->shipments()->downloadLabelByUrl($tx['shipment']['labelURL']));
+file_put_contents('label.html', $client->shipments()->downloadResponsiveLabelByUrl($tx['shipment']['responsiveLabelURL']));
 ```
 
 ---
@@ -149,7 +147,7 @@ $client->shipments()->create([
   'senderAddressID' => $sender['id'],
   'recipientAddressID' => $recipient['id'],
   'providerServiceCode' => 'MNG_STANDART',
-  'length' => 10, 'width' => 10, 'height' => 10, 'distanceUnit' => 'cm', 'weight' => 1, 'massUnit' => 'kg',
+  'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
 ```
 
@@ -168,6 +166,7 @@ $returned = $client->shipments()->createReturn($shipment['id'], [
 ```
 
 Not:
+
 - `providerServiceCode` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin sağlayıcısı kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
 - `senderAddress` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin alıcı adresi kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
 
@@ -215,10 +214,12 @@ if (($s['labelFileType'] ?? null) === ShipmentLabelFileType::PDF->value) {
 
 ## Notlar ve İpuçları (TR)
 
-- Ondalıklı sayılar string olarak gelir; hesaplama için BCMath veya GMP kullanın.
+- İstek tarafında `length`, `width`, `height`, `weight` değerleri string gönderilmelidir; örn. `'10.0'`.
+- Ondalıklı sayılar response tarafında genelde string olarak gelir; hesaplama için BCMath veya GMP kullanın.
 - Teklif beklerken 1 sn aralıkla tekrar sorgulayın; gereksiz yükten kaçının.
-- Test gönderisi: `$client->shipments()->create(['test' => true, ...])` veya `createTest([...])`.
+- Test gönderisi: `$client->shipments()->create(['test' => true, ...])` veya `createTest([...])`; canlı ortamda `createTest` yerine `$client->shipments()->create(...)` kullanın.
 - İlçe seçimi: districtID (number) tercih sebebidir; districtName her zaman birebir eşleşmeyebilir.
+- Takip numarası ile takip URL'si bazı kargo firmalarında teklif kabulünün hemen ardından oluşmayabilir. Paketi kargo şubesine teslim ettiğinizde veya kargo sizden teslim aldığında bu alanlar tamamlanır. Webhooklar ile değerleri otomatik çekebilir ya da teslimden sonra `shipment` GET isteği yaparak güncel bilgileri alabilirsiniz.
 - Şehir/İlçe seçimi: cityCode ve cityName birlikte/ayrı kullanılabilir; cityCode daha güvenlidir. Listeler için API'yi kullanın:
 
 ```php
