@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      - run: composer validate --no-check-lock
+      - name: Trigger Packagist update (optional)
+        if: ${{ secrets.PACKAGIST_TOKEN && secrets.PACKAGIST_PACKAGE }}
+        run: |
+          curl -s -X POST \
+            -H 'Content-Type: application/json' \
+            -d '{"repository":{"url":"${{ secrets.PACKAGIST_PACKAGE }}"}}' \
+            https://packagist.org/api/update-package?token=${{ secrets.PACKAGIST_TOKEN }}
+

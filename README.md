@@ -1,4 +1,5 @@
-# Geliver PHP SDK
+# Geliver PHP SDK  
+[![Packagist](https://img.shields.io/packagist/v/geliver/sdk.svg)](https://packagist.org/packages/geliver/sdk)
 
 Geliver PHP SDK — official PHP client for Geliver Kargo Pazaryeri (Shipping Marketplace) API.
 Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu sağlar.
@@ -48,11 +49,11 @@ $client = new Client('YOUR_TOKEN');
 $sender = $client->addresses()->createSender([
   'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'address1' => 'Street 1',
   'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
+  'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 $shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
-  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadikoy', 'districtID' => 100000, 'zip' => '34000'],
+  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadikoy', 'zip' => '34000'],
   // İstek alanları string olmalıdır
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
@@ -73,7 +74,7 @@ $client = new Client('YOUR_TOKEN');
 $sender = $client->addresses()->createSender([
   'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'phone' => '+905051234567',
   'address1' => 'Street 1', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
+  'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 
 // 2) Gönderi oluşturma (iki adım) — Seçenek A: alıcıyı inline verin (kayıt oluşturmadan)
@@ -83,7 +84,7 @@ $shipment = $client->shipments()->createTest([
   'recipientAddress' => [
     'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+905051234568',
     'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-    'districtName' => 'Esenyurt', 'districtID' => 107605, 'zip' => '34020',
+    'districtName' => 'Esenyurt', 'zip' => '34020',
   ],
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
@@ -94,7 +95,7 @@ $shipment = $client->shipments()->createTest([
 $recipient = $client->addresses()->createRecipient([
   'name' => 'John Doe', 'email' => 'john@example.com',
   'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Kadikoy', 'districtID' => 100000, 'zip' => '34000',
+  'districtName' => 'Kadikoy', 'zip' => '34000',
 ]);
 
 // 4) Teklifleri kontrol et: create yanıtında hazır olabilir
@@ -138,7 +139,7 @@ file_put_contents('label.html', $client->shipments()->downloadResponsiveLabelByU
 $recipient = $client->addresses()->createRecipient([
   'name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2',
   'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Kadikoy', 'districtID' => 100000, 'zip' => '34000',
+  'districtName' => 'Kadikoy', 'zip' => '34000',
 ]);
 
 // Ardından recipientAddressID ile gönderi oluşturun
@@ -217,7 +218,7 @@ if (($s['labelFileType'] ?? null) === ShipmentLabelFileType::PDF->value) {
 - Ondalıklı sayılar response tarafında genelde string olarak gelir; hesaplama için BCMath veya GMP kullanın.
 - Teklif beklerken 1 sn aralıkla tekrar sorgulayın; gereksiz yükten kaçının.
 - Test gönderisi: `$client->shipments()->create(['test' => true, ...])` veya `createTest([...])`; canlı ortamda `createTest` yerine `$client->shipments()->create(...)` kullanın.
-- İlçe seçimi: districtID (number) tercih sebebidir; districtName her zaman birebir eşleşmeyebilir.
+
 - Takip numarası ile takip URL'si bazı kargo firmalarında teklif kabulünün hemen ardından oluşmayabilir. Paketi kargo şubesine teslim ettiğinizde veya kargo sizden teslim aldığında bu alanlar tamamlanır. Webhooklar ile değerleri otomatik çekebilir ya da teslimden sonra `shipment` GET isteği yaparak güncel bilgileri alabilirsiniz.
 - Şehir/İlçe seçimi: cityCode ve cityName birlikte/ayrı kullanılabilir; cityCode daha güvenlidir. Listeler için API'yi kullanın:
 

@@ -5,6 +5,22 @@ namespace Geliver;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 
+class ApiException extends \RuntimeException
+{
+    public ?string $codeStr;
+    public ?string $additionalMessage;
+    public int $status;
+    public $body;
+    public function __construct(string $message, int $status = 0, ?string $codeStr = null, ?string $additionalMessage = null, $body = null)
+    {
+        parent::__construct($message, $status);
+        $this->status = $status;
+        $this->codeStr = $codeStr;
+        $this->additionalMessage = $additionalMessage;
+        $this->body = $body;
+    }
+}
+
 class Client
 {
     public const DEFAULT_BASE_URL = 'https://api.geliver.io/api/v1';
@@ -93,8 +109,22 @@ class Client
                 $res = $this->http->request($method, $uri, $options);
                 $body = (string) $res->getBody();
                 $json = json_decode($body, true);
-                if (is_array($json) && array_key_exists('data', $json)) {
-                    return $json['data'];
+                if ($res->getStatusCode() >= 400) {
+                    $code = is_array($json) && isset($json['code']) ? $json['code'] : null;
+                    $msg = is_array($json) && isset($json['message']) ? $json['message'] : ("HTTP " . $res->getStatusCode());
+                    $addl = is_array($json) && isset($json['additionalMessage']) ? $json['additionalMessage'] : null;
+                    throw new ApiException($msg, $res->getStatusCode(), $code, $addl, $json ?? $body);
+                }
+                if (is_array($json)) {
+                    if (array_key_exists('result', $json) && $json['result'] === false) {
+                        $code = $json['code'] ?? null;
+                        $msg = $json['message'] ?? 'API error';
+                        $addl = $json['additionalMessage'] ?? null;
+                        throw new ApiException($msg, $res->getStatusCode(), $code, $addl, $json);
+                    }
+                    if (array_key_exists('data', $json)) {
+                        return $json['data'];
+                    }
                 }
                 return $json ?? $body;
             } catch (RequestException $e) {
@@ -105,7 +135,18 @@ class Client
                     usleep((int) min(2000000, 200000 * (2 ** ($attempt - 1))));
                     continue;
                 }
-                throw $e;
+                // Try to surface API error details if available
+                $code = null; $msg = $e->getMessage(); $addl = null; $payload = null;
+                if ($res) {
+                    $text = (string) $res->getBody();
+                    $payload = json_decode($text, true);
+                    if (is_array($payload)) {
+                        $code = $payload['code'] ?? null;
+                        $msg = $payload['message'] ?? $msg;
+                        $addl = $payload['additionalMessage'] ?? null;
+                    }
+                }
+                throw new ApiException($msg, $status, $code, $addl, $payload);
             }
         }
     }

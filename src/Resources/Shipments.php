@@ -54,7 +54,7 @@ class Shipments
             $s = $this->get($shipmentId);
             $offers = $s['offers'] ?? null;
             $pc = (int)($offers['percentageCompleted'] ?? 0);
-            if ($offers && ($pc >= 99 || isset($offers['cheapest']))) return $offers;
+            if ($offers && ($pc == 100 || isset($offers['cheapest']))) return $offers;
             if (time() - $start > $timeoutSeconds) throw new \RuntimeException('Timed out waiting for offers');
             sleep($intervalSeconds);
         }

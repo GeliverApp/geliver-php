@@ -14,7 +14,7 @@ class CreateAddressRequest
         public string $cityName,
         public string $cityCode,
         public string $districtName,
-        public int $districtID,
+        public ?int $districtID = null,
         public string $zip,
         public ?string $shortName = null,
         public ?bool $isRecipientAddress = null,

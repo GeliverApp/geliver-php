@@ -96,9 +96,7 @@ class District {
     public ?string $regionCode;
 }
 
-/** Duration model */
-class Duration {
-}
+// Duration model removed; API returns integer timestamp for duration fields.
 
 /** Item model */
 class Item {
@@ -166,8 +164,8 @@ class Offer {
     public ?string $amountTax;
     /** @var string */
     public ?string $amountVat;
-    /** @var Duration */
-    public ?Duration $averageEstimatedTime;
+    /** @var int */
+    public ?int $averageEstimatedTime;
     /** @var string */
     public ?string $averageEstimatedTimeHumanReadible;
     /** @var string */
@@ -198,10 +196,10 @@ class Offer {
     public ?bool $isMainOffer;
     /** @var bool */
     public ?bool $isProviderAccountOffer;
-    /** @var Duration */
-    public ?Duration $maxEstimatedTime;
-    /** @var Duration */
-    public ?Duration $minEstimatedTime;
+    /** @var int */
+    public ?int $maxEstimatedTime;
+    /** @var int */
+    public ?int $minEstimatedTime;
     /** @var string */
     public ?string $owner;
     /** @var string */
