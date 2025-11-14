@@ -227,6 +227,15 @@ $cities = $client->geo()->listCities('TR');
 $districts = $client->geo()->listDistricts('TR', '34');
 ```
 
+- Adres kuralları: phone alanı hem gönderici hem alıcı adresleri için zorunludur. Zip alanı gönderici adresi için zorunludur; alıcı adresi için opsiyoneldir. `$client->addresses()->createSender([...])` phone/zip eksikse, `$client->addresses()->createRecipient([...])` phone eksikse hata verir.
+
+## Örnekler
+
+- Tam akış: `sdks/php/examples/full_flow.php` (composer install sonrası)
+- Tek aşamada gönderi (Create Transaction): `sdks/php/examples/onestep.php`
+- Kapıda ödeme: `sdks/php/examples/pod.php`
+- Kendi anlaşmanızla etiket satın alma: `sdks/php/examples/ownagreement.php`
+
 Diğer Örnekler (PHP)
 
 - Sağlayıcı Hesapları (Provider Accounts)

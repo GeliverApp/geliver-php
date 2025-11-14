@@ -122,9 +122,11 @@ class Client
                         $addl = $json['additionalMessage'] ?? null;
                         throw new ApiException($msg, $res->getStatusCode(), $code, $addl, $json);
                     }
-                    if (array_key_exists('data', $json)) {
-                        return $json['data'];
-                    }
+                    // Preserve full envelope when present (result/message/additionalMessage or pagination keys)
+                    $hasEnvelope = array_key_exists('result', $json) || array_key_exists('message', $json) || array_key_exists('additionalMessage', $json)
+                        || array_key_exists('limit', $json) || array_key_exists('page', $json) || array_key_exists('totalRows', $json) || array_key_exists('totalPages', $json);
+                    if ($hasEnvelope) return $json;
+                    if (array_key_exists('data', $json)) return $json['data'];
                 }
                 return $json ?? $body;
             } catch (RequestException $e) {

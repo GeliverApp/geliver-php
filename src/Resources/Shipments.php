@@ -16,6 +16,11 @@ class Shipments
                 $body['order']['sourceCode'] = 'API';
             }
         }
+        if (isset($body['recipientAddress']) && is_array($body['recipientAddress'])) {
+            if (!isset($body['recipientAddress']['phone']) || !$body['recipientAddress']['phone']) {
+                throw new \InvalidArgumentException('recipientAddress.phone is required');
+            }
+        }
         foreach (['length','width','height','weight'] as $k) {
             if (array_key_exists($k, $body) && $body[$k] !== null) {
                 $body[$k] = (string)$body[$k];
