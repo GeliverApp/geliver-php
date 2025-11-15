@@ -236,6 +236,24 @@ $districts = $client->geo()->listDistricts('TR', '34');
 - Kapıda ödeme: `sdks/php/examples/pod.php`
 - Kendi anlaşmanızla etiket satın alma: `sdks/php/examples/ownagreement.php`
 
+---
+
+## Hatalar ve İstisnalar
+
+- İstemci şu durumlarda `ApiException` fırlatır: (1) HTTP 4xx/5xx; (2) JSON envelope `result === false`.
+- Hata alanları: `$e->codeStr`, `$e->additionalMessage`, `$e->status`, `$e->getMessage()`, `$e->body`.
+
+```php
+try {
+  $client->shipments()->create([/* ... */]);
+} catch (\Geliver\ApiException $e) {
+  error_log('code: ' . $e->codeStr);
+  error_log('message: ' . $e->getMessage());
+  error_log('additional: ' . $e->additionalMessage);
+  error_log('status: ' . $e->status);
+}
+```
+
 Diğer Örnekler (PHP)
 
 - Sağlayıcı Hesapları (Provider Accounts)
