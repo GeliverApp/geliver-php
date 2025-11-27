@@ -23,7 +23,7 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 
 ## Kurulum
 
-- Projenizde kullanmak için Packagist paketini ekleyin: `composer require geliver/sdk`
+- Packagist: `composer require geliver/sdk:^1.0`
 - Bu repodaki örnekleri çalıştırmak için: `cd sdks/php && composer install`
 
 ---
