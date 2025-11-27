@@ -98,17 +98,14 @@ $recipient = $client->addresses()->createRecipient([
   'districtName' => 'Kadikoy', 'zip' => '34000',
 ]);
 
-// 4) Teklifleri kontrol et: create yanıtında hazır olabilir
+// 4) Teklifleri kontrol et: create yanıtında yoksa tek GET ile güncel shipment alın
 $offers = $shipment['offers'] ?? null;
-if (!($offers && ((int)($offers['percentageCompleted'] ?? 0) == 100 || isset($offers['cheapest'])))) {
-  // Hazır değilse, 100 olana kadar 1 sn aralıkla sorgulayın
-  do {
-    $s = $client->shipments()->get($shipment['id']);
-    $offers = $s['offers'] ?? null;
-    $pc = (int)($offers['percentageCompleted'] ?? 0);
-    if ($pc == 100 || isset($offers['cheapest'])) break;
-    usleep(1000000);
-  } while (true);
+if (empty($offers['cheapest'])) {
+  $refreshed = $client->shipments()->get($shipment['id']);
+  $offers = $refreshed['offers'] ?? null;
+}
+if (empty($offers['cheapest'])) {
+  throw new RuntimeException('Teklifler henüz hazır değil; GET /shipments ile tekrar kontrol edin.');
 }
 
 $tx = $client->transactions()->acceptOffer($offers['cheapest']['id']);
