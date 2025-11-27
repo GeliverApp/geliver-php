@@ -38,13 +38,8 @@ $shipment = $client->shipments()->createTest([
 
 // Etiket indirme: Teklif kabulünden sonra (Transaction) gelen URL'leri kullanabilirsiniz de; URL'lere her shipment nesnesinin içinden ulaşılır.
 
-// Teklifler create yanıtında yoksa tek bir GET ile güncel shipment alın
+// Teklifler create yanıtındaki offers alanında gelir
 $offers = $shipment['offers'] ?? null;
-if (empty($offers['cheapest'])) {
-  $refreshed = $client->shipments()->get($shipment['id']);
-  $offers = $refreshed['offers'] ?? null;
-}
-
 if (empty($offers['cheapest'])) {
   echo "Error: No cheapest offer available (henüz hazır değil)" . PHP_EOL;
   exit(1);
