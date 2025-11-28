@@ -25,7 +25,7 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 ## Kurulum
 
 - Packagist: `composer require geliver/sdk:^1.0`
-- Bu repodaki örnekleri çalıştırmak için: `cd sdks/php && composer install`
+- Bu repodaki örnekleri çalıştırmak için: `composer install`
 
 ---
 
@@ -58,6 +58,13 @@ $shipment = $client->shipments()->createTest([
   'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000'],
   // İstek alanları string olmalıdır
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
+  'order' => [
+    'orderNumber' => 'WEB-12345',
+    // sourceIdentifier alanına mağazanızın tam adresini yazın (ör. https://magazam.com).
+    'sourceIdentifier' => 'https://magazam.com',
+    'totalAmount' => '150',
+    'totalAmountCurrency' => 'TRY',
+  ],
 ]);
 ```
 
@@ -89,6 +96,13 @@ $shipment = $client->shipments()->createTest([
     'districtName' => 'Esenyurt', 'zip' => '34020',
   ],
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
+  'order' => [
+    'orderNumber' => 'WEB-12345',
+    // sourceIdentifier alanına mağazanızın tam adresini yazın (ör. https://magazam.com).
+    'sourceIdentifier' => 'https://magazam.com',
+    'totalAmount' => '150',
+    'totalAmountCurrency' => 'TRY',
+  ],
 ]);
 
 // Etiket indirme: Teklif kabulünden sonra (Transaction) gelen URL'leri kullanabilirsiniz de; URL'lere her shipment nesnesinin içinden ulaşılır.
@@ -124,8 +138,6 @@ echo 'Final tracking status: ' . ($ts['trackingStatusCode'] ?? '') . ' ' . ($ts[
 file_put_contents('label.pdf', $client->shipments()->downloadLabelByUrl($tx['shipment']['labelURL']));
 file_put_contents('label.html', $client->shipments()->downloadResponsiveLabelByUrl($tx['shipment']['responsiveLabelURL']));
 ```
-
----
 
 ## Alıcı ID'si ile oluşturma (recipientAddressID)
 
@@ -226,10 +238,10 @@ $districts = $client->geo()->listDistricts('TR', '34');
 
 ## Örnekler
 
-- Tam akış: `sdks/php/examples/full_flow.php` (composer install sonrası)
-- Tek aşamada gönderi (Create Transaction): `sdks/php/examples/onestep.php`
-- Kapıda ödeme: `sdks/php/examples/pod.php`
-- Kendi anlaşmanızla etiket satın alma: `sdks/php/examples/ownagreement.php`
+- Tam akış: `examples/full_flow.php` (composer install sonrası)
+- Tek aşamada gönderi (Create Transaction): `examples/onestep.php`
+- Kapıda ödeme: `examples/pod.php`
+- Kendi anlaşmanızla etiket satın alma: `examples/ownagreement.php`
 
 ---
 
