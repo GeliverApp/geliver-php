@@ -8,6 +8,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      PACKAGIST_TOKEN: ${{ secrets.PACKAGIST_TOKEN }}
+      PACKAGIST_PACKAGE: ${{ secrets.PACKAGIST_PACKAGE }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,10 +20,12 @@ jobs:
           php-version: '8.2'
       - run: composer validate --no-check-lock
       - name: Trigger Packagist update (optional)
-        if: ${{ secrets.PACKAGIST_TOKEN && secrets.PACKAGIST_PACKAGE }}
+        if: ${{ env.PACKAGIST_TOKEN != '' && env.PACKAGIST_PACKAGE != '' }}
+        env:
+          PACKAGIST_TOKEN: ${{ env.PACKAGIST_TOKEN }}
+          PACKAGIST_PACKAGE: ${{ env.PACKAGIST_PACKAGE }}
         run: |
           curl -s -X POST \
             -H 'Content-Type: application/json' \
-            -d '{"repository":{"url":"${{ secrets.PACKAGIST_PACKAGE }}"}}' \
-            https://packagist.org/api/update-package?token=${{ secrets.PACKAGIST_TOKEN }}
-
+            -d "{\"repository\":{\"url\":\"${PACKAGIST_PACKAGE}\"}}" \
+            "https://packagist.org/api/update-package?token=${PACKAGIST_TOKEN}"
