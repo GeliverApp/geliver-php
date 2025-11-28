@@ -673,3 +673,13 @@ class Tracking {
     /** @var string */
     public ?string $updatedAt;
 }
+
+/** WebhookUpdateTrackingRequest model */
+class WebhookUpdateTrackingRequest {
+    /** @var string */
+    public ?string $event;
+    /** @var string */
+    public ?string $metadata;
+    /** @var Shipment */
+    public ?Shipment $data;
+}

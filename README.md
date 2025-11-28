@@ -181,7 +181,33 @@ Not:
 
 ## Webhooklar
 
-- `/webhooks/geliver` gibi bir endpoint yayınlayın ve JSON içeriği işleyin. Doğrulama için `Geliver\Webhooks::verify($rawBody, $headers, false)` kullanabilirsiniz (şimdilik devre dışı).
+- `/webhooks/geliver` gibi bir endpoint yayınlayın ve JSON içeriğini `WebhookUpdateTrackingRequest` modeli ile ayrıştırın. Doğrulama için `Geliver\Webhooks::verify($rawBody, $headers, false)` kullanabilirsiniz (şimdilik devre dışı).
+
+```php
+use Geliver\Webhooks;
+use Geliver\Models\WebhookUpdateTrackingRequest;
+use Geliver\Models\Shipment;
+
+$raw = file_get_contents('php://input');
+if (!Webhooks::verify($raw, getallheaders(), false)) {
+  http_response_code(400);
+  exit('invalid');
+}
+$payload = json_decode($raw, true) ?: [];
+$evt = new WebhookUpdateTrackingRequest();
+$evt->event = $payload['event'] ?? '';
+$evt->metadata = $payload['metadata'] ?? null;
+$evt->data = new Shipment();
+foreach (($payload['data'] ?? []) as $key => $value) {
+  if (property_exists($evt->data, $key)) {
+    $evt->data->{$key} = $value;
+  }
+}
+if ($evt->event === 'TRACK_UPDATED') {
+  echo 'Tracking update: ' . ($evt->data->trackingUrl ?? '') . ' ' . ($evt->data->trackingNumber ?? '') . PHP_EOL;
+}
+```
+
 - Webhook yönetimi: `$client->webhooks()->create('https://yourapp.test/webhooks/geliver');`
 
 ---
