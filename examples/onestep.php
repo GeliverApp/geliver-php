@@ -9,7 +9,7 @@ $client = new Client($token);
 
 $sender = $client->addresses()->createSender([
   'name' => 'OneStep Sender', 'email' => 'sender@example.com',
-  'address1' => 'Street 1', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Esenyurt', 'zip' => '34020',
+  'address1' => 'Hasan Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 
 $tx = $client->transactions()->create([

@@ -21,7 +21,7 @@ $client = new Client($token);
 
 $sender = $client->addresses()->createSender([
   'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'phone' => '+905051234567',
-  'address1' => 'Street 1', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
+  'address1' => 'Hasan Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
   'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 

@@ -1,4 +1,5 @@
-# Geliver PHP SDK  
+# Geliver PHP SDK
+
 [![Packagist](https://img.shields.io/packagist/v/geliver/sdk.svg)](https://packagist.org/packages/geliver/sdk)
 
 Geliver PHP SDK — official PHP client for Geliver Kargo Pazaryeri (Shipping Marketplace) API.
@@ -48,13 +49,13 @@ use Geliver\Client;
 
 $client = new Client('YOUR_TOKEN');
 $sender = $client->addresses()->createSender([
-  'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'address1' => 'Street 1',
+  'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'address1' => 'Hasan Mahallesi',
   'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
   'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 $shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
-  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadikoy', 'zip' => '34000'],
+  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000'],
   // İstek alanları string olmalıdır
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
@@ -74,7 +75,7 @@ $client = new Client('YOUR_TOKEN');
 // 1) Gönderici adresi oluşturma. Her gönderici adresi için tek seferlik yapılır. Oluşan gönderici adres ID'sini saklayıp tekrar kullanılır.
 $sender = $client->addresses()->createSender([
   'name' => 'ACME Inc.', 'email' => 'ops@acme.test', 'phone' => '+905051234567',
-  'address1' => 'Street 1', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
+  'address1' => 'Hasan Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
   'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 
@@ -96,7 +97,7 @@ $shipment = $client->shipments()->createTest([
 $recipient = $client->addresses()->createRecipient([
   'name' => 'John Doe', 'email' => 'john@example.com',
   'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Kadikoy', 'zip' => '34000',
+  'districtName' => 'Kadıköy', 'zip' => '34000',
 ]);
 
 // 4) Teklifleri kontrol et: create yanıtındaki offers alanını kullanın
@@ -133,7 +134,7 @@ file_put_contents('label.html', $client->shipments()->downloadResponsiveLabelByU
 $recipient = $client->addresses()->createRecipient([
   'name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2',
   'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
-  'districtName' => 'Kadikoy', 'zip' => '34000',
+  'districtName' => 'Kadıköy', 'zip' => '34000',
 ]);
 
 // Ardından recipientAddressID ile gönderi oluşturun
