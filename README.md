@@ -55,7 +55,7 @@ $sender = $client->addresses()->createSender([
 ]);
 $shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
-  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000'],
+  'recipientAddress' => ['name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000'],
   // İstek alanları string olmalıdır
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
 ]);
@@ -85,7 +85,7 @@ $shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
   'recipientAddress' => [
     'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+905051234568',
-    'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
+    'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
     'districtName' => 'Esenyurt', 'zip' => '34020',
   ],
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
@@ -96,7 +96,7 @@ $shipment = $client->shipments()->createTest([
 // 3) Alıcı adresi oluşturma (örnek)
 $recipient = $client->addresses()->createRecipient([
   'name' => 'John Doe', 'email' => 'john@example.com',
-  'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
+  'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
   'districtName' => 'Kadıköy', 'zip' => '34000',
 ]);
 
@@ -132,7 +132,7 @@ file_put_contents('label.html', $client->shipments()->downloadResponsiveLabelByU
 ```php
 // Önce alıcı adresini kaydedin ve ID alın
 $recipient = $client->addresses()->createRecipient([
-  'name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Dest St 2',
+  'name' => 'John Doe', 'email' => 'john@example.com', 'address1' => 'Atatürk Mahallesi',
   'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
   'districtName' => 'Kadıköy', 'zip' => '34000',
 ]);

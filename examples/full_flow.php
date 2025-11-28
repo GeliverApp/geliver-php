@@ -29,7 +29,7 @@ $shipment = $client->shipments()->createTest([
   'senderAddressID' => $sender['id'],
   'recipientAddress' => [
     'name' => 'John Doe', 'email' => 'john@example.com', 'phone' => '+905051234568',
-    'address1' => 'Dest St 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
+    'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34',
     'districtName' => 'Esenyurt', 'zip' => '34020',
   ],
   'order' => [ 'orderNumber' => 'ABC12333322', 'sourceIdentifier' => 'https://magazaadresiniz.com', 'totalAmount' => 150, 'totalAmountCurrency' => 'TL' ],

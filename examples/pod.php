@@ -15,7 +15,7 @@ $sender = $client->addresses()->createSender([
 $tx = $client->transactions()->create([
   'senderAddressID' => $sender['id'],
   'recipientAddress' => [
-    'name' => 'POD Recipient', 'phone' => '+905000000001', 'address1' => 'Dest 2', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Esenyurt',
+    'name' => 'POD Recipient', 'phone' => '+905000000001', 'address1' => 'Atatürk Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Esenyurt',
   ],
   'length' => '10.0', 'width' => '10.0', 'height' => '10.0', 'distanceUnit' => 'cm', 'weight' => '1.0', 'massUnit' => 'kg',
   'providerServiceCode' => 'PTT_KAPIDA_ODEME',
