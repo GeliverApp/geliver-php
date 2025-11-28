@@ -263,7 +263,7 @@ try {
 
 Diğer Örnekler (PHP)
 
-- Sağlayıcı Hesapları (Provider Accounts)
+- Kendi Kargo Anlaşmanız (Provider Accounts)
 
 ```php
 $acc = $client->providers()->createAccount([
