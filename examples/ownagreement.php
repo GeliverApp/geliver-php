@@ -8,7 +8,7 @@ if (!$token) { fwrite(STDERR, "GELIVER_TOKEN required\n"); exit(1); }
 $client = new Client($token);
 
 $sender = $client->addresses()->createSender([
-  'name' => 'OwnAg Sender', 'email' => 'sender@example.com',
+  'name' => 'OwnAg Sender', 'email' => 'sender@example.com', 'phone' => '+905000000097',
   'address1' => 'Hasan Mahallesi', 'countryCode' => 'TR', 'cityName' => 'Istanbul', 'cityCode' => '34', 'districtName' => 'Esenyurt', 'zip' => '34020',
 ]);
 
