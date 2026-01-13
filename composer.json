@@ -1,7 +1,7 @@
 {
   "name": "geliver/sdk",
   "description": "Geliver API SDK (PHP)",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "license": "MIT",
   "type": "library",
   "require": {
