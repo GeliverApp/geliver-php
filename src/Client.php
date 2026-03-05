@@ -24,22 +24,29 @@ class ApiException extends \RuntimeException
 class Client
 {
     public const DEFAULT_BASE_URL = 'https://api.geliver.io/api/v1';
+    public const VERSION = '1.2.2';
 
     private string $baseUrl;
     private string $token;
     private GuzzleClient $http;
     private int $maxRetries = 2;
+    /** @var array<string,string> */
+    private array $defaultHeaders;
 
     public function __construct(string $token, ?string $baseUrl = null, ?GuzzleClient $http = null)
     {
         $this->baseUrl = rtrim($baseUrl ?? self::DEFAULT_BASE_URL, '/');
         $this->token = $token;
+        $this->defaultHeaders = [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Content-Type' => 'application/json',
+            'User-Agent' => 'geliver-php/' . self::VERSION,
+        ];
         $this->http = $http ?? new GuzzleClient([
             'base_uri' => $this->baseUrl,
             'timeout' => 30.0,
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->token,
-                'Content-Type' => 'application/json',
+                ...$this->defaultHeaders,
             ],
         ]);
     }
@@ -95,6 +102,7 @@ class Client
     {
         $attempt = 0;
         $uri = $this->baseUrl . $path;
+        $options['headers'] = array_merge($this->defaultHeaders, $options['headers'] ?? []);
         if (isset($options['query'])) {
             $qs = http_build_query($options['query']);
             if ($qs) { $uri .= '?' . $qs; }

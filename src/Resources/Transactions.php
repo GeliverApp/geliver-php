@@ -21,7 +21,7 @@ class Transactions
         $shipment = (isset($body['shipment']) && is_array($body['shipment'])) ? $body['shipment'] : $body;
         if (isset($shipment['order']) && is_array($shipment['order'])) {
             if (!isset($shipment['order']['sourceCode']) || !$shipment['order']['sourceCode']) {
-                $shipment['order']['sourceCode'] = 'API';
+                $shipment['order']['sourceCode'] = 'SDK';
             }
         }
         if (isset($shipment['recipientAddress']) && is_array($shipment['recipientAddress'])) {

@@ -13,7 +13,7 @@ class Shipments
     public function create(array $body): array {
         if (isset($body['order']) && is_array($body['order'])) {
             if (!isset($body['order']['sourceCode']) || !$body['order']['sourceCode']) {
-                $body['order']['sourceCode'] = 'API';
+                $body['order']['sourceCode'] = 'SDK';
             }
         }
         if (isset($body['recipientAddress']) && is_array($body['recipientAddress'])) {
@@ -77,11 +77,14 @@ class Shipments
         }
     }
 
-    /** Create return shipment (PATCH with isReturn=true). @return array Shipment */
+    /** Create return shipment (POST with isReturn=true). @return array Shipment */
     public function createReturn(string $shipmentId, array $body): array
     {
         $payload = array_merge($body, ['isReturn' => true]);
-        return $this->client->request('PATCH', '/shipments/' . rawurlencode($shipmentId), ['json' => $payload]);
+        if (!array_key_exists('count', $payload) || $payload['count'] === null || (is_numeric($payload['count']) && (int)$payload['count'] <= 0)) {
+            $payload['count'] = 1;
+        }
+        return $this->client->request('POST', '/shipments/' . rawurlencode($shipmentId), ['json' => $payload]);
     }
 
     /** Convenience method to create test shipments without changing the body. */
@@ -94,7 +97,11 @@ class Shipments
     /** Download PDF label by URL. @return string binary content */
     public function downloadLabelByUrl(string $url): string
     {
-        $res = (new \GuzzleHttp\Client())->request('GET', $url);
+        $res = (new \GuzzleHttp\Client([
+            'headers' => [
+                'User-Agent' => 'geliver-php/' . Client::VERSION,
+            ],
+        ]))->request('GET', $url);
         if ($res->getStatusCode() >= 400) throw new \RuntimeException('download failed');
         return (string) $res->getBody();
     }
