@@ -77,14 +77,19 @@ class Shipments
         }
     }
 
-    /** Create return shipment (POST with isReturn=true). @return array Shipment */
+    /** Create a return shipment without purchasing the label yet. Use transactions()->createReturn to purchase it immediately. @return array Shipment */
     public function createReturn(string $shipmentId, array $body): array
     {
+        if (($body['willAccept'] ?? false) === true) {
+            throw new \InvalidArgumentException('shipments()->createReturn does not support willAccept=true; use transactions()->createReturn instead');
+        }
         $payload = array_merge($body, ['isReturn' => true]);
+        unset($payload['willAccept']);
         if (!array_key_exists('count', $payload) || $payload['count'] === null || (is_numeric($payload['count']) && (int)$payload['count'] <= 0)) {
             $payload['count'] = 1;
         }
-        return $this->client->request('POST', '/shipments/' . rawurlencode($shipmentId), ['json' => $payload]);
+        $response = $this->client->request('POST', '/shipments/' . rawurlencode($shipmentId), ['json' => $payload]);
+        return (is_array($response) && array_key_exists('data', $response)) ? $response['data'] : $response;
     }
 
     /** Convenience method to create test shipments without changing the body. */

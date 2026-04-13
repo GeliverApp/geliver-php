@@ -10,7 +10,22 @@ class Transactions
 
     public function acceptOffer(string $offerId): array
     {
-        return $this->client->request('POST', '/transactions', ['json' => ['offerID' => $offerId]]);
+        $response = $this->client->request('POST', '/transactions', ['json' => ['offerID' => $offerId]]);
+        return (is_array($response) && array_key_exists('data', $response)) ? $response['data'] : $response;
+    }
+
+    /** Create a return shipment and purchase the label immediately. Returns Transaction payload. */
+    public function createReturn(string $shipmentId, array $body): array
+    {
+        $payload = array_merge($body, [
+            'isReturn' => true,
+            'willAccept' => true,
+        ]);
+        if (!array_key_exists('count', $payload) || $payload['count'] === null || (is_numeric($payload['count']) && (int)$payload['count'] <= 0)) {
+            $payload['count'] = 1;
+        }
+        $response = $this->client->request('POST', '/shipments/' . rawurlencode($shipmentId), ['json' => $payload]);
+        return (is_array($response) && array_key_exists('data', $response)) ? $response['data'] : $response;
     }
 
     /**
@@ -48,6 +63,7 @@ class Transactions
         if ($providerServiceCode !== null) {
             $wrapper['providerServiceCode'] = $providerServiceCode;
         }
-        return $this->client->request('POST', '/transactions', ['json' => $wrapper]);
+        $response = $this->client->request('POST', '/transactions', ['json' => $wrapper]);
+        return (is_array($response) && array_key_exists('data', $response)) ? $response['data'] : $response;
     }
 }

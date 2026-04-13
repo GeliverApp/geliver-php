@@ -25,7 +25,7 @@ final class TransactionsTest extends TestCase
         $http = new GuzzleClient(['handler' => $handlerStack, 'base_uri' => Client::DEFAULT_BASE_URL]);
         $client = new Client('test', Client::DEFAULT_BASE_URL, $http);
 
-        $client->transactions()->create([
+        $tx = $client->transactions()->create([
             'senderAddressID' => 'sender-1',
             'recipientAddress' => ['name' => 'R', 'phone' => '+905000000000'],
             'length' => 10.5,
@@ -54,5 +54,30 @@ final class TransactionsTest extends TestCase
         $this->assertSame('SDK', $shipment['order']['sourceCode']);
         $this->assertIsString($shipment['length']);
         $this->assertIsString($shipment['weight']);
+        $this->assertSame('tx1', $tx['id']);
+    }
+
+    public function testAcceptOfferUnwrapsTransaction(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, ['Content-Type' => 'application/json'], json_encode([
+                'result' => true,
+                'data' => ['id' => 'tx-accept', 'offerID' => 'offer-123'],
+            ])),
+        ]);
+
+        $historyContainer = [];
+        $handlerStack = HandlerStack::create($mock);
+        $handlerStack->push(Middleware::history($historyContainer));
+        $http = new GuzzleClient(['handler' => $handlerStack, 'base_uri' => Client::DEFAULT_BASE_URL]);
+        $client = new Client('test', Client::DEFAULT_BASE_URL, $http);
+
+        $tx = $client->transactions()->acceptOffer('offer-123');
+
+        $this->assertCount(1, $historyContainer);
+        $req = $historyContainer[0]['request'];
+        $this->assertSame('POST', $req->getMethod());
+        $this->assertStringEndsWith('/transactions', $req->getUri()->getPath());
+        $this->assertSame('tx-accept', $tx['id']);
     }
 }

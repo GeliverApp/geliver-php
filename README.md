@@ -6,6 +6,7 @@ Geliver PHP SDK — official PHP client for Geliver Kargo Pazaryeri (Shipping Ma
 Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu sağlar.
 
 • Dokümantasyon (TR/EN): https://docs.geliver.io
+• Değişiklik geçmişi: `CHANGELOG.md`
 
 ---
 
@@ -38,7 +39,7 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 5. Barkod, takip numarası, etiket URL’leri Transaction içindeki Shipment’te bulunur
 6. Test gönderilerinde her GET /shipments isteği kargo durumunu bir adım ilerletir; prod'da webhook kurun
 7. Etiketleri indirin (downloadLabel, downloadResponsiveLabel)
-8. İade gönderisi gerekiyorsa shipments()->createReturn kullanın
+8. İadeyi oluşturup etiketi henüz satın almamak için `shipments()->createReturn`; iadeyi oluşturup etiketi hemen satın almak için `transactions()->createReturn` kullanın
 
 ---
 
@@ -166,17 +167,30 @@ $client->shipments()->create([
 
 ```php
 $returned = $client->shipments()->createReturn($shipment['id'], [
-  'willAccept' => true,
   'providerServiceCode' => 'SURAT_STANDART',
 ]);
+echo $returned['id'] . PHP_EOL;
 ```
 
 Not:
 
-- `willAccept` alanı opsiyoneldir (varsayılan `false`). `true` ise backend iade için uygun teklifi otomatik kabul eder (etiket satın alma). `false` ise sadece iade shipment’i oluşturur; daha sonra teklif kabul ederek etiket alabilirsiniz.
+- `shipments()->createReturn(...)` iadeyi oluşturur, etiketi satın almaz ve shipment dizisi döner.
+- Etiketi daha sonra satın almak isterseniz, teklif hazır olduğunda normal satın alma akışını `transactions()->acceptOffer(...)` ile kullanabilirsiniz.
 - `providerServiceCode` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin sağlayıcısı kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
 - `senderAddress` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin alıcı adresi kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
 - `count` alanı opsiyoneldir (varsayılan `1`). Bu fonksiyon “tek shipment için tek iade” akışı içindir; genelde `1` kullanılmalıdır.
+
+İadeyi oluşturup etiketi hemen satın almak için:
+
+```php
+$tx = $client->transactions()->createReturn($shipment['id'], [
+  'providerServiceCode' => 'SURAT_STANDART',
+]);
+echo $tx['id'] . PHP_EOL; // transaction id
+echo ($tx['shipment']['id'] ?? '') . PHP_EOL; // return shipment id, API döndürüyorsa
+```
+
+- `transactions()->createReturn(...)` iadeyi oluşturur, etiketi hemen satın alır ve `Transaction` döner.
 
 ---
 
@@ -304,9 +318,13 @@ $districts = $client->geo()->listDistricts('TR', '34');
 ## Örnekler
 
 - Tam akış: `examples/full_flow.php` (composer install sonrası)
+- İade oluştur, etiketi sonra satın al: `examples/return_shipment.php`
+- İade oluştur, etiketi hemen satın al: `examples/return_transaction.php`
 - Tek aşamada gönderi (Create Transaction): `examples/onestep.php`
 - Kapıda ödeme: `examples/pod.php`
 - Kendi anlaşmanızla etiket satın alma: `examples/ownagreement.php`
+
+İade örnekleri mevcut ve iade edilebilir bir shipment ID bekler. ID'yi `GELIVER_RETURN_SHIPMENT_ID` ile veya ilk komut satırı argümanı olarak verebilirsiniz.
 
 ---
 

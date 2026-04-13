@@ -24,7 +24,7 @@ class ApiException extends \RuntimeException
 class Client
 {
     public const DEFAULT_BASE_URL = 'https://api.geliver.io/api/v1';
-    public const VERSION = '1.2.2';
+    public const VERSION = '1.3.0';
 
     private string $baseUrl;
     private string $token;
