@@ -10,14 +10,13 @@ use GuzzleHttp\Psr7\Response;
 
 final class ShipmentsTest extends TestCase
 {
-    public function testAllNewShipmentFlowsRequireOneAddressPerSide(): void
+    public function testNewShipmentFlowsRequireRecipientAndAllowDefaultSender(): void
     {
         $client = new Client('test');
         $invalid = [
-            ['recipientAddressID' => 'merchant-1'],
-            ['senderAddressID' => 'customer-1', 'senderAddress' => ['address1' => 'A'], 'recipientAddressID' => 'merchant-1'],
-            ['senderAddressID' => 'customer-1'],
-            ['senderAddressID' => 'customer-1', 'recipientAddressID' => 'merchant-1', 'recipientAddress' => ['address1' => 'B']],
+            ['senderAddressID' => 'merchant-1', 'senderAddress' => ['address1' => 'A'], 'recipientAddressID' => 'customer-1'],
+            ['senderAddressID' => 'merchant-1'],
+            ['senderAddressID' => 'merchant-1', 'recipientAddressID' => 'customer-1', 'recipientAddress' => ['address1' => 'B']],
         ];
 
         foreach ($invalid as $body) {
@@ -43,6 +42,7 @@ final class ShipmentsTest extends TestCase
             new Response(200, ['Content-Type' => 'application/json'], $response),
             new Response(200, ['Content-Type' => 'application/json'], $response),
             new Response(200, ['Content-Type' => 'application/json'], $response),
+            new Response(200, ['Content-Type' => 'application/json'], $response),
         ]);
         $history = [];
         $stack = HandlerStack::create($mock);
@@ -51,13 +51,14 @@ final class ShipmentsTest extends TestCase
             'handler' => $stack, 'base_uri' => Client::DEFAULT_BASE_URL,
         ]));
 
-        $customer = ['name' => 'Customer', 'phone' => '+905051234567', 'address1' => 'A'];
-        $merchant = ['name' => 'Merchant', 'phone' => '+905051234568', 'address1' => 'B'];
+        $merchant = ['name' => 'Merchant', 'phone' => '+905051234567', 'address1' => 'A'];
+        $customer = ['name' => 'Customer', 'phone' => '+905051234568', 'address1' => 'B'];
         $cases = [
-            ['senderAddressID' => 'customer-1', 'recipientAddressID' => 'merchant-1'],
-            ['senderAddressID' => 'customer-1', 'recipientAddress' => $merchant],
-            ['senderAddress' => $customer, 'recipientAddressID' => 'merchant-1'],
-            ['senderAddress' => $customer, 'recipientAddress' => $merchant],
+            ['recipientAddress' => $customer],
+            ['senderAddressID' => 'merchant-1', 'recipientAddressID' => 'customer-1'],
+            ['senderAddressID' => 'merchant-1', 'recipientAddress' => $customer],
+            ['senderAddress' => $merchant, 'recipientAddressID' => 'customer-1'],
+            ['senderAddress' => $merchant, 'recipientAddress' => $customer],
         ];
 
         foreach ($cases as $index => $addresses) {
@@ -86,8 +87,7 @@ final class ShipmentsTest extends TestCase
 
         $shipment = $client->shipments()->create([
             'isReturn' => true,
-            'senderAddress' => ['name' => 'Customer', 'phone' => '+905051234567', 'address1' => 'A'],
-            'recipientAddressID' => 'merchant-1',
+            'recipientAddress' => ['name' => 'Customer', 'phone' => '+905051234567', 'address1' => 'A'],
         ]);
 
         $this->assertSame('incoming-1', $shipment['data']['id']);
@@ -95,8 +95,8 @@ final class ShipmentsTest extends TestCase
         $this->assertStringEndsWith('/shipments', $history[0]['request']->getUri()->getPath());
         $body = json_decode((string) $history[0]['request']->getBody(), true);
         $this->assertTrue($body['isReturn']);
-        $this->assertSame('Customer', $body['senderAddress']['name']);
-        $this->assertSame('merchant-1', $body['recipientAddressID']);
+        $this->assertSame('Customer', $body['recipientAddress']['name']);
+        $this->assertArrayNotHasKey('senderAddress', $body);
         $this->assertArrayNotHasKey('senderAddressID', $body);
     }
 

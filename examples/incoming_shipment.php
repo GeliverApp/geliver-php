@@ -10,9 +10,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 use Geliver\Client;
 
 $token = getenv('GELIVER_TOKEN');
-$recipientAddressID = getenv('GELIVER_MERCHANT_ADDRESS_ID');
-if (!$token || !$recipientAddressID) {
-    fwrite(STDERR, "Set GELIVER_TOKEN and GELIVER_MERCHANT_ADDRESS_ID.\n");
+if (!$token) {
+    fwrite(STDERR, "Set GELIVER_TOKEN.\n");
     exit(1);
 }
 
@@ -20,12 +19,11 @@ $client = new Client($token);
 $shipment = $client->shipments()->create([
     'isReturn' => true,
     'test' => true,
-    'senderAddress' => [
+    'recipientAddress' => [
         'name' => 'Müşteri Adı', 'email' => 'customer@example.com', 'phone' => '+905051234567',
         'address1' => 'Örnek Mahallesi 1', 'countryCode' => 'TR',
         'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000',
     ],
-    'recipientAddressID' => $recipientAddressID,
     'length' => '10', 'width' => '10', 'height' => '10',
     'distanceUnit' => 'cm', 'weight' => '1', 'massUnit' => 'kg',
 ]);

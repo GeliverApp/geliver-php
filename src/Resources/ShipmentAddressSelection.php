@@ -10,7 +10,7 @@ final class ShipmentAddressSelection
             $id = $body[$side . 'AddressID'] ?? null;
             $hasID = is_string($id) && trim($id) !== '';
             $hasAddress = is_array($body[$side . 'Address'] ?? null);
-            if ($hasID === $hasAddress) {
+            if (($side === 'recipient' && $hasID === $hasAddress) || ($side === 'sender' && $hasID && $hasAddress)) {
                 throw new \InvalidArgumentException("Provide exactly one of {$side}AddressID or {$side}Address");
             }
         }

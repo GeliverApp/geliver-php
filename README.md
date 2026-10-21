@@ -43,7 +43,7 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 
 ### Gönderi adresi seçimi
 
-Yeni gönderide gönderici için `senderAddressID` veya satır içi `senderAddress`; alıcı için `recipientAddressID` veya satır içi `recipientAddress` verin. Dört kombinasyon da desteklenir; her taraf için yalnızca bir adres seçin. Bu kural normal ve iade dahil tüm yeni gönderilerde ve tek adım etiket satın alma akışında geçerlidir.
+Yeni gönderide alıcı için `recipientAddressID` veya satır içi `recipientAddress` alanlarından birini verin. Gönderici için `senderAddressID` veya `senderAddress` kullanabilirsiniz; ikisini de vermezseniz backend kurumun varsayılan gönderici adresini kullanır. Bu kural normal ve iade dahil tüm yeni gönderilerde ve tek adım etiket satın alma akışında geçerlidir.
 
 ---
 
@@ -169,24 +169,23 @@ $client->shipments()->create([
 
 ## Referans gönderi olmadan kargo bana gelecek
 
-Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. `isReturn` adresleri otomatik değiştirmez. Aşağıdaki örnekte müşteri adresi satır içi, sizin adresiniz kayıtlıdır. `test => true` yalnızca test içindir.
+Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. İadede `recipientAddress` müşterinin kargonun alınacağı adresidir; `senderAddress` sizin teslim adresinizdir. Backend taşıyıcı için yönü ters çevirir. Aşağıdaki örnek sizin için varsayılan gönderici adresini kullanır. `test => true` yalnızca test içindir.
 
 ```php
 $shipment = $client->shipments()->create([
   'isReturn' => true,
   'test' => true,
-  'senderAddress' => [
+  'recipientAddress' => [
     'name' => 'Müşteri Adı', 'email' => 'customer@example.com', 'phone' => '+905051234567',
     'address1' => 'Örnek Mahallesi 1', 'countryCode' => 'TR',
     'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000',
   ],
-  'recipientAddressID' => $merchantAddressID,
   'length' => '10', 'width' => '10', 'height' => '10',
   'distanceUnit' => 'cm', 'weight' => '1', 'massUnit' => 'kg',
 ]);
 ```
 
-Çalıştırılabilir örnek: `GELIVER_TOKEN=... GELIVER_MERCHANT_ADDRESS_ID=... php examples/incoming_shipment.php`. Etiketi satın almak için teklif kabul akışını kullanın.
+Çalıştırılabilir örnek: `GELIVER_TOKEN=... php examples/incoming_shipment.php`. Etiketi satın almak için teklif kabul akışını kullanın.
 
 ## Var olan gönderiye bağlı iade oluşturun
 
