@@ -10,6 +10,31 @@ use GuzzleHttp\Psr7\Response;
 
 final class ShipmentsTest extends TestCase
 {
+    public function testAllNewShipmentFlowsRequireOneAddressPerSide(): void
+    {
+        $client = new Client('test');
+        $invalid = [
+            ['recipientAddressID' => 'merchant-1'],
+            ['senderAddressID' => 'customer-1', 'senderAddress' => ['address1' => 'A'], 'recipientAddressID' => 'merchant-1'],
+            ['senderAddressID' => 'customer-1'],
+            ['senderAddressID' => 'customer-1', 'recipientAddressID' => 'merchant-1', 'recipientAddress' => ['address1' => 'B']],
+        ];
+
+        foreach ($invalid as $body) {
+            foreach ([
+                fn () => $client->shipments()->create($body),
+                fn () => $client->transactions()->create(['shipment' => $body]),
+            ] as $create) {
+                try {
+                    $create();
+                    $this->fail('Invalid address selection was accepted');
+                } catch (\InvalidArgumentException $exception) {
+                    $this->assertStringContainsString('exactly one', $exception->getMessage());
+                }
+            }
+        }
+    }
+
     public function testIncomingShipmentAddressCombinations(): void
     {
         $response = json_encode(['result' => true, 'data' => ['id' => 'incoming-1']]);

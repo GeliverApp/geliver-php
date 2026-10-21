@@ -11,6 +11,7 @@ class Shipments
 
     /** Create shipment; each side accepts an address ID or inline address. @return array Shipment */
     public function create(array $body): array {
+        ShipmentAddressSelection::validate($body);
         if (isset($body['order']) && is_array($body['order'])) {
             if (!isset($body['order']['sourceCode']) || !$body['order']['sourceCode']) {
                 $body['order']['sourceCode'] = 'SDK';
