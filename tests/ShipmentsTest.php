@@ -10,6 +10,41 @@ use GuzzleHttp\Psr7\Response;
 
 final class ShipmentsTest extends TestCase
 {
+    public function testIncomingShipmentAddressCombinations(): void
+    {
+        $response = json_encode(['result' => true, 'data' => ['id' => 'incoming-1']]);
+        $mock = new MockHandler([
+            new Response(200, ['Content-Type' => 'application/json'], $response),
+            new Response(200, ['Content-Type' => 'application/json'], $response),
+            new Response(200, ['Content-Type' => 'application/json'], $response),
+            new Response(200, ['Content-Type' => 'application/json'], $response),
+        ]);
+        $history = [];
+        $stack = HandlerStack::create($mock);
+        $stack->push(Middleware::history($history));
+        $client = new Client('test', Client::DEFAULT_BASE_URL, new GuzzleClient([
+            'handler' => $stack, 'base_uri' => Client::DEFAULT_BASE_URL,
+        ]));
+
+        $customer = ['name' => 'Customer', 'phone' => '+905051234567', 'address1' => 'A'];
+        $merchant = ['name' => 'Merchant', 'phone' => '+905051234568', 'address1' => 'B'];
+        $cases = [
+            ['senderAddressID' => 'customer-1', 'recipientAddressID' => 'merchant-1'],
+            ['senderAddressID' => 'customer-1', 'recipientAddress' => $merchant],
+            ['senderAddress' => $customer, 'recipientAddressID' => 'merchant-1'],
+            ['senderAddress' => $customer, 'recipientAddress' => $merchant],
+        ];
+
+        foreach ($cases as $index => $addresses) {
+            $client->shipments()->create(['isReturn' => true] + $addresses);
+            $body = json_decode((string) $history[$index]['request']->getBody(), true);
+            $this->assertTrue($body['isReturn']);
+            foreach (['senderAddressID', 'senderAddress', 'recipientAddressID', 'recipientAddress'] as $key) {
+                $this->assertSame(array_key_exists($key, $addresses), array_key_exists($key, $body));
+            }
+        }
+    }
+
     public function testCreateIncomingShipmentKeepsAddressDirection(): void
     {
         $mock = new MockHandler([

@@ -13,7 +13,7 @@ This file documents notable changes in the SDK.
 
 ### 1.4.0
 
-- `shipments()->create(...)` ile `isReturn`, satır içi `senderAddress` ve `recipientAddressID` kullanılarak bağımsız iade gönderisi oluşturulabilir.
+- `shipments()->create(...)` ile `isReturn` ve gönderici/alıcı için bağımsız ID veya satır içi adres seçimi kullanılarak iade gönderisi oluşturulabilir.
 - `examples/incoming_shipment.php` eklendi.
 
 ### 1.3.0
@@ -44,7 +44,7 @@ This file documents notable changes in the SDK.
 
 ### 1.4.0
 
-- `shipments()->create(...)` supports independent returns with `isReturn`, an inline `senderAddress`, and `recipientAddressID`.
+- `shipments()->create(...)` supports independent returns with `isReturn` and either an address ID or an inline address for each side.
 - Added `examples/incoming_shipment.php`.
 
 ### 1.3.0
