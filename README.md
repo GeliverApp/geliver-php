@@ -41,6 +41,10 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 7. Etiketleri indirin (downloadLabel, downloadResponsiveLabel)
 8. İadeyi oluşturup etiketi henüz satın almamak için `shipments()->createReturn`; iadeyi oluşturup etiketi hemen satın almak için `transactions()->createReturn` kullanın
 
+### Gönderi adresi seçimi
+
+Yeni gönderide gönderici için `senderAddressID` veya satır içi `senderAddress`; alıcı için `recipientAddressID` veya satır içi `recipientAddress` verin. Dört kombinasyon da desteklenir; her taraf için yalnızca bir adres seçin. Bu kural normal ve iade dahil tüm yeni gönderilerde ve tek adım etiket satın alma akışında geçerlidir.
+
 ---
 
 ## Hızlı Başlangıç
@@ -165,7 +169,7 @@ $client->shipments()->create([
 
 ## Referans gönderi olmadan kargo bana gelecek
 
-Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. Gönderici için `senderAddressID` veya satır içi `senderAddress`; alıcı için `recipientAddressID` veya satır içi `recipientAddress` kullanabilirsiniz. Dört kombinasyon da desteklenir; her taraf için yalnızca bir adres seçin. Bu kural normal ve iade dahil tüm yeni gönderilerde ve tek adım etiket satın alma akışında geçerlidir. `isReturn` adresleri otomatik değiştirmez. Aşağıdaki örnekte müşteri adresi satır içi, sizin adresiniz kayıtlıdır. `test => true` yalnızca test içindir.
+Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. `isReturn` adresleri otomatik değiştirmez. Aşağıdaki örnekte müşteri adresi satır içi, sizin adresiniz kayıtlıdır. `test => true` yalnızca test içindir.
 
 ```php
 $shipment = $client->shipments()->create([
