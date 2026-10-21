@@ -6,10 +6,15 @@ This file documents notable changes in the SDK.
 
 ## Sürüm / Version
 
-- Türkçe: Bu değişiklikler `1.3.0` sürümü için hazırlandı.
-- English: These changes are prepared for version `1.3.0`.
+- Türkçe: Bu değişiklikler `1.4.0` sürümü için hazırlandı.
+- English: These changes are prepared for version `1.4.0`.
 
 ## Türkçe
+
+### 1.4.0
+
+- `shipments()->create(...)` ile `isReturn`, satır içi `senderAddress` ve `recipientAddressID` kullanılarak bağımsız iade gönderisi oluşturulabilir.
+- `examples/incoming_shipment.php` eklendi.
 
 ### 1.3.0
 
@@ -36,6 +41,11 @@ This file documents notable changes in the SDK.
 - Geliver PHP SDK'nin ilk genel kullanıma açık sürümü.
 
 ## English
+
+### 1.4.0
+
+- `shipments()->create(...)` supports independent returns with `isReturn`, an inline `senderAddress`, and `recipientAddressID`.
+- Added `examples/incoming_shipment.php`.
 
 ### 1.3.0
 
