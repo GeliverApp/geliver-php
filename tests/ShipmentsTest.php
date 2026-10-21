@@ -10,6 +10,36 @@ use GuzzleHttp\Psr7\Response;
 
 final class ShipmentsTest extends TestCase
 {
+    public function testCreateIncomingShipmentKeepsAddressDirection(): void
+    {
+        $mock = new MockHandler([
+            new Response(200, ['Content-Type' => 'application/json'], json_encode([
+                'result' => true, 'data' => ['id' => 'incoming-1'],
+            ])),
+        ]);
+        $history = [];
+        $stack = HandlerStack::create($mock);
+        $stack->push(Middleware::history($history));
+        $client = new Client('test', Client::DEFAULT_BASE_URL, new GuzzleClient([
+            'handler' => $stack, 'base_uri' => Client::DEFAULT_BASE_URL,
+        ]));
+
+        $shipment = $client->shipments()->create([
+            'isReturn' => true,
+            'senderAddress' => ['name' => 'Customer', 'phone' => '+905051234567', 'address1' => 'A'],
+            'recipientAddressID' => 'merchant-1',
+        ]);
+
+        $this->assertSame('incoming-1', $shipment['data']['id']);
+        $this->assertSame('POST', $history[0]['request']->getMethod());
+        $this->assertStringEndsWith('/shipments', $history[0]['request']->getUri()->getPath());
+        $body = json_decode((string) $history[0]['request']->getBody(), true);
+        $this->assertTrue($body['isReturn']);
+        $this->assertSame('Customer', $body['senderAddress']['name']);
+        $this->assertSame('merchant-1', $body['recipientAddressID']);
+        $this->assertArrayNotHasKey('senderAddressID', $body);
+    }
+
     public function testListShipments(): void
     {
         $mock = new MockHandler([

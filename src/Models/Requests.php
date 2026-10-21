@@ -25,7 +25,7 @@ class CreateShipmentRequestBase
 {
     public function __construct(
         public string $sourceCode,
-        public string $senderAddressID,
+        public ?string $senderAddressID,
         public ?string $length = null,
         public ?string $width = null,
         public ?string $height = null,
@@ -33,6 +33,8 @@ class CreateShipmentRequestBase
         public ?string $weight = null,
         public ?string $massUnit = null,
         public ?string $providerServiceCode = null,
+        public ?array $senderAddress = null,
+        public ?bool $isReturn = null,
     ) {}
 }
 
@@ -40,7 +42,7 @@ class CreateShipmentWithRecipientID extends CreateShipmentRequestBase
 {
     public function __construct(
         string $sourceCode,
-        string $senderAddressID,
+        ?string $senderAddressID,
         public string $recipientAddressID,
         ?string $length = null,
         ?string $width = null,
@@ -49,14 +51,16 @@ class CreateShipmentWithRecipientID extends CreateShipmentRequestBase
         ?string $weight = null,
         ?string $massUnit = null,
         ?string $providerServiceCode = null,
-    ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode); }
+        ?array $senderAddress = null,
+        ?bool $isReturn = null,
+    ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode, $senderAddress, $isReturn); }
 }
 
 class CreateShipmentWithRecipientAddress extends CreateShipmentRequestBase
 {
     public function __construct(
         string $sourceCode,
-        string $senderAddressID,
+        ?string $senderAddressID,
         public array $recipientAddress,
         ?string $length = null,
         ?string $width = null,
@@ -65,7 +69,9 @@ class CreateShipmentWithRecipientAddress extends CreateShipmentRequestBase
         ?string $weight = null,
         ?string $massUnit = null,
         ?string $providerServiceCode = null,
-    ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode); }
+        ?array $senderAddress = null,
+        ?bool $isReturn = null,
+    ) { parent::__construct($sourceCode, $senderAddressID, $length, $width, $height, $distanceUnit, $weight, $massUnit, $providerServiceCode, $senderAddress, $isReturn); }
 }
 
 class UpdatePackageRequest

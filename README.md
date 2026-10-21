@@ -163,7 +163,28 @@ $client->shipments()->create([
 
 ---
 
-## İade Gönderisi Oluşturun
+## Referans gönderi olmadan kargo bana gelecek
+
+Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. `senderAddress` müşterinin çıkış adresi, `recipientAddressID` sizin kayıtlı alıcı adresinizdir. `isReturn` adresleri otomatik değiştirmez. `test => true` yalnızca test içindir.
+
+```php
+$shipment = $client->shipments()->create([
+  'isReturn' => true,
+  'test' => true,
+  'senderAddress' => [
+    'name' => 'Müşteri Adı', 'phone' => '+905051234567',
+    'address1' => 'Örnek Mahallesi 1', 'countryCode' => 'TR',
+    'cityCode' => '34', 'districtName' => 'Kadıköy',
+  ],
+  'recipientAddressID' => $merchantAddressID,
+  'length' => '10', 'width' => '10', 'height' => '10',
+  'distanceUnit' => 'cm', 'weight' => '1', 'massUnit' => 'kg',
+]);
+```
+
+Çalıştırılabilir örnek: `GELIVER_TOKEN=... GELIVER_MERCHANT_ADDRESS_ID=... php examples/incoming_shipment.php`. Etiketi satın almak için teklif kabul akışını kullanın.
+
+## Var olan gönderiye bağlı iade oluşturun
 
 ```php
 $returned = $client->shipments()->createReturn($shipment['id'], [
