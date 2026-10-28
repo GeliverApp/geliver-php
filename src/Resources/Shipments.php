@@ -9,8 +9,9 @@ class Shipments
     /** @var Client */
     public function __construct(private Client $client) {}
 
-    /** Create shipment; recipient can be provided inline or via recipientAddressID. @return array Shipment */
+    /** Create shipment; each side accepts an address ID or inline address. @return array Shipment */
     public function create(array $body): array {
+        ShipmentAddressSelection::validate($body);
         if (isset($body['order']) && is_array($body['order'])) {
             if (!isset($body['order']['sourceCode']) || !$body['order']['sourceCode']) {
                 $body['order']['sourceCode'] = 'SDK';

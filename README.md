@@ -41,6 +41,10 @@ Türkiye’nin e‑ticaret gönderim altyapısı için kolay kargo entegrasyonu 
 7. Etiketleri indirin (downloadLabel, downloadResponsiveLabel)
 8. İadeyi oluşturup etiketi henüz satın almamak için `shipments()->createReturn`; iadeyi oluşturup etiketi hemen satın almak için `transactions()->createReturn` kullanın
 
+### Gönderi adresi seçimi
+
+Yeni gönderide alıcı için `recipientAddressID` veya satır içi `recipientAddress` alanlarından birini verin. Gönderici için `senderAddressID` veya `senderAddress` kullanabilirsiniz; ikisini de vermezseniz backend kurumun varsayılan gönderici adresini kullanır. Bu kural normal ve iade dahil tüm yeni gönderilerde ve tek adım etiket satın alma akışında geçerlidir.
+
 ---
 
 ## Hızlı Başlangıç
@@ -163,12 +167,30 @@ $client->shipments()->create([
 
 ---
 
-## İade Gönderisi Oluşturun
+## Referans gönderi olmadan kargo bana gelecek
+
+Müşteriden size gelecek yeni gönderiyi `shipments()->create` ile `isReturn => true` göndererek oluşturun. İadede `recipientAddress` müşterinin kargonun alınacağı adresidir; `senderAddress` sizin teslim adresinizdir. Backend taşıyıcı için yönü ters çevirir. Aşağıdaki örnek sizin için varsayılan gönderici adresini kullanır. `test => true` yalnızca test içindir.
 
 ```php
-$returned = $client->shipments()->createReturn($shipment['id'], [
-  'providerServiceCode' => 'SURAT_STANDART',
+$shipment = $client->shipments()->create([
+  'isReturn' => true,
+  'test' => true,
+  'recipientAddress' => [
+    'name' => 'Müşteri Adı', 'email' => 'customer@example.com', 'phone' => '+905051234567',
+    'address1' => 'Örnek Mahallesi 1', 'countryCode' => 'TR',
+    'cityCode' => '34', 'districtName' => 'Kadıköy', 'zip' => '34000',
+  ],
+  'length' => '10', 'width' => '10', 'height' => '10',
+  'distanceUnit' => 'cm', 'weight' => '1', 'massUnit' => 'kg',
 ]);
+```
+
+Çalıştırılabilir örnek: `GELIVER_TOKEN=... php examples/incoming_shipment.php`. Etiketi satın almak için teklif kabul akışını kullanın.
+
+## Var olan gönderiye bağlı iade oluşturun
+
+```php
+$returned = $client->shipments()->createReturn($shipment['id'], []);
 echo $returned['id'] . PHP_EOL;
 ```
 
@@ -176,8 +198,8 @@ Not:
 
 - `shipments()->createReturn(...)` iadeyi oluşturur, etiketi satın almaz ve shipment dizisi döner.
 - Etiketi daha sonra satın almak isterseniz, teklif hazır olduğunda normal satın alma akışını `transactions()->acceptOffer(...)` ile kullanabilirsiniz.
-- `providerServiceCode` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin sağlayıcısı kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
-- `senderAddress` alanı opsiyoneldir. Varsayılan olarak orijinal gönderinin alıcı adresi kullanılır; dilerseniz bu alanı vererek değiştirebilirsiniz.
+- `providerServiceCode` yalnızca etiketi hemen satın alan iade akışında kullanılır; verilmezse orijinal gönderinin taşıyıcısı seçilir. Etiketi satın almadan iade oluştururken bu alan dikkate alınmaz.
+- İade müşteriden orijinal göndericiye gider. `senderAddress` ile müşterinin kargonun alınacağı adresini değiştirebilirsiniz; verilmezse orijinal alıcı adresi kullanılır. Adresleri SDK tarafında ters çevirmeyin. Bu referanslı iade endpoint’i yalnızca inline `senderAddress` kabul eder; yeni gönderi oluşturmadaki `recipientAddress`, `recipientAddressID` ve `senderAddressID` seçenekleri burada geçerli değildir.
 - `count` alanı opsiyoneldir (varsayılan `1`). Bu fonksiyon “tek shipment için tek iade” akışı içindir; genelde `1` kullanılmalıdır.
 
 İadeyi oluşturup etiketi hemen satın almak için:

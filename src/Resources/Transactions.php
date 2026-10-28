@@ -34,6 +34,7 @@ class Transactions
     public function create(array $body): array
     {
         $shipment = (isset($body['shipment']) && is_array($body['shipment'])) ? $body['shipment'] : $body;
+        ShipmentAddressSelection::validate($shipment);
         if (isset($shipment['order']) && is_array($shipment['order'])) {
             if (!isset($shipment['order']['sourceCode']) || !$shipment['order']['sourceCode']) {
                 $shipment['order']['sourceCode'] = 'SDK';

@@ -6,10 +6,16 @@ This file documents notable changes in the SDK.
 
 ## Sürüm / Version
 
-- Türkçe: Bu değişiklikler `1.3.0` sürümü için hazırlandı.
-- English: These changes are prepared for version `1.3.0`.
+- Türkçe: Bu değişiklikler `1.4.0` sürümü için hazırlandı.
+- English: These changes are prepared for version `1.4.0`.
 
 ## Türkçe
+
+### 1.4.0
+
+- Tüm yeni gönderilerde alıcı adresi zorunludur; gönderici adresi verilmezse kurumun varsayılan gönderici adresi kullanılır.
+- `shipments()->create(...)` ile `isReturn` ve gönderici/alıcı için bağımsız ID veya satır içi adres seçimi kullanılarak iade gönderisi oluşturulabilir.
+- `examples/incoming_shipment.php` eklendi.
 
 ### 1.3.0
 
@@ -36,6 +42,12 @@ This file documents notable changes in the SDK.
 - Geliver PHP SDK'nin ilk genel kullanıma açık sürümü.
 
 ## English
+
+### 1.4.0
+
+- All new shipments require a recipient address; the organization default sender address is used when no sender is provided.
+- `shipments()->create(...)` supports independent returns with `isReturn`; the backend reverses the delivery direction for carriers.
+- Added `examples/incoming_shipment.php`.
 
 ### 1.3.0
 
